@@ -12,12 +12,12 @@ func main() {
 	}
 
 	data := struct {
-		Name string
-		Email string
+		Name    string
+		Email   string
 		Friends []string
 	}{
-		Name: "John Smith",
-		Email: "john@smith.com",
+		Name:    "John Smith",
+		Email:   "john@smith.com",
 		Friends: []string{"Alice", "Bob", "Charlie"},
 	}
 
