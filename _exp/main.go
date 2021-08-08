@@ -48,4 +48,14 @@ func main() {
 	// Because of an update, the name should now
 	// be "Updated Name"
 	fmt.Println(foundUser)
+
+	// Delete a user
+if err := us.Delete(foundUser.ID); err != nil {
+	panic(err)
+  }
+  // Verify the user is deleted
+  _, err = us.ByID(foundUser.ID)
+  if err != models.ErrNotFound {
+	panic("user was not deleted!")
+  }
 }
