@@ -11,51 +11,40 @@ const (
 	port     = 5432
 	user     = "postgres"
 	password = "password"
-	dbname   = "lenslocked_exp"
+	dbname   = "lenslocked_dev"
 )
 
 func main() {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+	  "password=%s dbname=%s sslmode=disable",
+	  host, port, user, password, dbname)
 	us, err := models.NewUserService(psqlInfo)
 	if err != nil {
-		panic(err)
+	  panic(err)
 	}
 	defer us.Close()
 	us.DestructiveReset()
-
-	// Create a user
+  
 	user := models.User{
-		Name:  "Michael Scott",
-		Email: "michael@dundermifflin.com",
+	  Name:     "Michael Scott",
+	  Email:    "michael@dundermifflin.com",
+	  Password: "bestboss",
 	}
-	if err := us.Create(&user); err != nil {
-		panic(err)
-	}
-
-	// NOTE: You may need to update the query code a bit as well
-	// Update a user
-	user.Name = "Updated Name"
-	if err := us.Update(&user); err != nil {
-		panic(err)
-	}
-
-	foundUser, err := us.ByEmail("michael@dundermifflin.com")
+	err = us.Create(&user)
 	if err != nil {
-		panic(err)
+	  panic(err)
 	}
-	// Because of an update, the name should now
-	// be "Updated Name"
-	fmt.Println(foundUser)
-
-	// Delete a user
-if err := us.Delete(foundUser.ID); err != nil {
-	panic(err)
+	// Verify that the user has a Remember and RememberHash
+	fmt.Printf("%+v\n", user)
+	if user.Remember == "" {
+	  panic("Invalid remember token")
+	}
+  
+	// Now verify that we can lookup a user with that remember
+	// token
+	user2, err := us.ByRemember(user.Remember)
+	if err != nil {
+	  panic(err)
+	}
+	fmt.Printf("%+v\n", *user2)
   }
-  // Verify the user is deleted
-  _, err = us.ByID(foundUser.ID)
-  if err != models.ErrNotFound {
-	panic("user was not deleted!")
-  }
-}
