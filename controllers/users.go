@@ -113,8 +113,8 @@ func (u *Users) signIn(w http.ResponseWriter,
 	}
 
 	cookie := http.Cookie{
-		Name:  "remember_token",
-		Value: user.Remember,
+		Name:     "remember_token",
+		Value:    user.Remember,
 		HttpOnly: true,
 	}
 	http.SetCookie(w, &cookie)
